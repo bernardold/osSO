@@ -1,7 +1,7 @@
 /** @file 	boot.s
  *	@brief	Simple boot sector
  *	
- *	Simple boot sector implementation for osSo.
+ *	Simple boot sector implementation for osSO.
  *  
  *	It performs a simple operations given by the opcodes:
  *		- 0 for sum
@@ -9,6 +9,7 @@
  *		- 2 for mul
  *		- 3 for div
  *
+ *	@author		Bernardo Simões Lage Gomes Duarte (bernardolageduarte@gmail.com)
  *	@author		Decio Lauro Soares (deciolauro@gmail.com)
  *	@author		Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)
  *	@date		2016
@@ -21,7 +22,7 @@
 
 .section .data
 msg_welcome:
-	.asciz "Welcome to OsSo"
+	.asciz "Welcome to osSO"
 msg_cmd:
 	.asciz "Waiting..."
 msg_foo:
