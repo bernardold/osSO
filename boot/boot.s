@@ -9,7 +9,7 @@
  *		- 2 for mul
  *		- 3 for div
  *
- *	@author		Bernardo Simões Lage Gomes Duarte (bernardolageduarte@gmail.com)
+ *	@author		Bernardo Simoes Lage Gomes Duarte (bernardolageduarte@gmail.com)
  *	@author		Decio Lauro Soares (deciolauro@gmail.com)
  *	@author		Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)
  *	@date		2016
