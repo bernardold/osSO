@@ -10,6 +10,7 @@
  *		- 3 for div
  *
  *	@author		Decio Lauro Soares (deciolauro@gmail.com)
+ *	@author		Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)
  *	@date		2016
  *	@bug		--
  *	@warning	--
