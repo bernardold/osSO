@@ -108,7 +108,7 @@ move_cursor:
 	mov $0x10, %dh # set cursor row
 	mov $0x03, %dl # set cursor column
 	int $0x10
-	jmp print_welcome2
+	ret
 
 read_op:
 	xor %ax, %ax
@@ -128,8 +128,9 @@ print_op:
 	jmp move
 
 foo_aux:
-	int $0x19
-	ret
+	ljmp $0xF000, $0xfff0
+	//int $0x19
+	//ret
 	//mov $0x0000, %ax
 	//mov %ax, 0x00400072
 	//jmp 0xFFFF0000
@@ -157,12 +158,43 @@ loop_user_op:
 	jz print_bar
 	xor %al, %al
 	jnz	print_help
+/*
+printw:
+	push %ax
+ 	shrw $8, %ax
+ 	call printb
+ 	pop %ax
+ 	push %ax
+ 	and  $0xff, %ax
+ 	call printb
+ 	pop %ax
+ 	ret
+printb:
+	push %ax
+  	shrw $4, %al
+  	call printasc
+  	pop $ax
+  	and $0xf, %al
+  	call printasc
+  	ret
+printasc:
+	add $0x30, %al
+  	cmp $0x39, %al
+  	jle printasc_e
+  	add $0x7, %al
+printasc_e:
+	mov %al, %dl
+	mov $0x2, %ah
+  	int $0x21
+  	ret
+*/
 
 start:
 	nop
 	xor %ax, %ax
 	xor %di, %di
-	int $0x19 # Here it restarts
+	//int $0x19 # Here it restarts
+	//call printw
 	call user_op
 	call read_op
 	cmp $0x66, %al
