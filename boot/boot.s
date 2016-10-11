@@ -161,7 +161,7 @@ loop_user_op:
 /*
 printw:
 	push %ax
- 	shrw $8, %ax
+ 	shr $8, %ax
  	call printb
  	pop %ax
  	push %ax
@@ -171,9 +171,9 @@ printw:
  	ret
 printb:
 	push %ax
-  	shrw $4, %al
+  	shr $4, %al
   	call printasc
-  	pop $ax
+  	pop %ax
   	and $0xf, %al
   	call printasc
   	ret
@@ -185,16 +185,16 @@ printasc:
 printasc_e:
 	mov %al, %dl
 	mov $0x2, %ah
-  	int $0x21
   	ret
 */
-
 start:
 	nop
 	xor %ax, %ax
 	xor %di, %di
 	//int $0x19 # Here it restarts
 	//call printw
+	mov $0x0123, %ax
+	call printw
 	call user_op
 	call read_op
 	cmp $0x66, %al
