@@ -73,7 +73,7 @@ print_foo:
 print_bar:
 	mov $msg_bar, %si
 	call print
-	ret
+	jmp loop_user_op
 print_help:
 	mov $msg_bar, %si
 	call print
@@ -96,15 +96,15 @@ end_print:
 
 clear_screen:
 	mov $0x0600, %ax
-    mov $0x7, %bh
-    mov $0x0, %cx
-    mov $0x184f, %dx
+    	mov $0x7, %bh
+    	mov $0x0, %cx
+    	mov $0x184f, %dx
 	int $0x10
 	ret
 
 move_cursor:
 	mov $0x02, %ah # set cursor position
-    mov $0x00, %bh # display page (change for text mode)
+    	mov $0x00, %bh # display page (change for text mode)
 	mov $0x10, %dh # set cursor row
 	mov $0x03, %dl # set cursor column
 	int $0x10
