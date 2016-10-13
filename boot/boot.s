@@ -3,7 +3,7 @@
  *	
  *	Simple boot sector implementation for osSO.
  *  
- *	It performs a simple operations given by the opcodes:
+ *	It performs few simple operations given by the opcodes:
  *		- 1 clear screen
  *		- 2 bootload version
  *		- 3 print devices
@@ -26,14 +26,24 @@ msg_welcome:
 	.asciz "Welcome to osSO"
 msg_cmd:
 	.asciz "Waiting..."
-msg_foo:
-	.asciz "foo"
-msg_bar:
-	.asciz "OsSo version 1.0.1-alpha"
+msg_ver:
+	.asciz "osSO v.1.0.1-alpha"
 msg_help:
-	.asciz "Invalid Opcode, options (1,2,3,4,5)"
+	.asciz "InvOp, op(1,2,3,4,5)"
 msg_mem:
 	.asciz "Mem: 0x" #output should be hex
+msg_floppy:
+	.asciz "Floppy; "
+msg_mouse:
+	.asciz "Mouse; "
+msg_dma_sup:
+	.asciz "DMASup; "
+msg_gamep:
+	.asciz "GPort; "
+msg_vga:
+	.asciz "VGA; "
+msg_eighty:
+	.asciz "8086; "
 
 .section .text
 
@@ -41,11 +51,6 @@ msg_mem:
 
 _start:
 	jmp start
-
-print_setup:
-	mov $0xB800, %ax
-	mov %ax, %ds
-	jmp print
 
 print:
 	xor %dx, %dx
@@ -64,44 +69,49 @@ print_welcome:
 	mov $0xB800, %ax # Set to color monitor (use 0xB000 for monochrome)
 	mov %ax, %ds
 	mov $msg_welcome, %si
-	jmp move
+	call print
+
 print_welcome2:
 	mov $0x0A00, %di
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
-	mov $0x0A, %ah
-	mov $0x61, %al
-	mov $0x00, %bh 
-	mov $0x10, %bl 
-	mov $0x03, %cx 
-	int $0x10
-	jmp move
-print_foo:
-	mov $msg_foo, %si
 	call print
 	ret
+	
 print_ver:
-	mov $msg_bar, %si
+	mov $msg_ver, %si
 	call print
 	jmp loop_user_op
 print_help:
 	mov $msg_help, %si
 	call print
 	jmp loop_user_op
+print_floppy:
+	mov $msg_floppy, %si
+	call print
+	jmp mouse
+print_mouse:
+	mov $msg_mouse, %si
+	call print
+	jmp dma
+print_dma_sup:
+	mov $msg_dma_sup, %si
+	call print
+	jmp gamep
+print_game_port:
+	mov $msg_gamep, %si
+	call print
+	jmp vga
+print_vga:
+	mov $msg_vga, %si
+	call print
+	jmp eighty
+print_eighty:
+	mov $msg_eighty, %si
+	call print
+	jmp drives
 
-move:
-	xor %dx, %dx
-	mov %cs:(%si), %dl
-	cmp $0, %dl
-idle:
-	jz end_print
-	mov %dl, (%di)
-	inc %di
-	movb $0x1E, (%di) # color
-	inc %di
-	inc %si
-	jmp move
 end_print:
 	ret
 
@@ -126,14 +136,6 @@ read_op:
 	mov $0x10, %ah
 	int $0x16	# consume key
 	ret
-
-print_op:
-	push %eax
-	mov $0xB800, %ax
-	mov %ax, %ds
-	pop %eax
-	mov (%eax), %si
-	jmp move
 
 restart:
 	ljmp $0xF000, $0xfff0
@@ -221,8 +223,43 @@ clear_screen_op:
 	jmp user_op
 
 print_dev:
-	nop
-	jmp loop_user_op
+	int $0x11
+	push %ax
+	floppy:
+		and $0x1, %ax # diskette
+		cmp $0x1, %ax
+		jz print_floppy
+	mouse:
+		pop %ax
+		push %ax
+		and $0x3, %ax
+		cmp $0x3, %ax
+		jz print_mouse
+	dma:
+		pop %ax
+		push %ax
+		and $0x8, %ax
+		jnz print_dma_sup
+	gamep:
+		pop %ax
+		push %ax
+		and $0xC, %ax
+		jz print_game_port
+	vga:
+		pop %ax
+		push %ax
+		and $0x30, %ax
+		cmp $0x0, %ax
+		jnz print_vga
+	eighty:
+		pop %ax
+		push %ax
+		and $0x2, %ax
+		cmp $0x2, %ax
+		jz print_eighty
+	drives:
+		xor %ax, %ax
+		jmp loop_user_op
 
 start:
 	nop
@@ -230,9 +267,6 @@ start:
 	xor %di, %di
 	call user_op
 	call read_op
-	cmp $0x66, %al
-	je	print_foo
-	jne print_welcome2
 
 end:
 	jmp end
