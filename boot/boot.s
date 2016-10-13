@@ -4,10 +4,11 @@
  *	Simple boot sector implementation for osSo.
  *  
  *	It performs a simple operations given by the opcodes:
- *		- 0 for sum
- *		- 1 for sub
- *		- 2 for mul
- *		- 3 for div
+ *		- 1 clear screen
+ *		- 2 bootload version
+ *		- 3 print devices
+ *		- 4 restart
+ *		- 5 print available ram
  *
  *	@author		Decio Lauro Soares (deciolauro@gmail.com)
  *	@author		Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)
@@ -27,9 +28,9 @@ msg_cmd:
 msg_foo:
 	.asciz "foo"
 msg_bar:
-	.asciz "bar"
+	.asciz "OsSo version 1.0.1-alpha"
 msg_help:
-	.asciz "Help info"
+	.asciz "Invalid Opcode, options (1,2,3,4,5)"
 
 .section .text
 
@@ -62,10 +63,10 @@ print_welcome:
 	mov $msg_welcome, %si
 	jmp move
 print_welcome2:
+	mov $0x0140, %di
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
-	
 	mov $0x0A, %ah
 	mov $0x61, %al
 	mov $0x00, %bh 
@@ -77,14 +78,14 @@ print_foo:
 	mov $msg_foo, %si
 	call print
 	ret
-print_bar:
+print_ver:
 	mov $msg_bar, %si
 	call print
 	jmp loop_user_op
 print_help:
-	mov $msg_bar, %si
+	mov $msg_help, %si
 	call print
-	ret
+	jmp loop_user_op
 
 move:
 	xor %dx, %dx
@@ -103,15 +104,15 @@ end_print:
 
 clear_screen:
 	mov $0x0600, %ax
-    	mov $0x7, %bh
-    	mov $0x0, %cx
-    	mov $0x184f, %dx
+    mov $0x7, %bh
+    mov $0x0, %cx
+    mov $0x184f, %dx
 	int $0x10
 	ret
 
 move_cursor:
 	mov $0x02, %ah # set cursor position
-    	mov $0x00, %bh # display page (change for text mode)
+    mov $0x00, %bh # display page (change for text mode)
 	mov $0x10, %dh # set cursor row
 	mov $0x03, %dl # set cursor column
 	int $0x10
@@ -119,9 +120,6 @@ move_cursor:
 
 read_op:
 	xor %ax, %ax
-	//mov $0x11, %ah	# check keyboard buffer
-	//int $0x16
-	//jz read_op # still waiting
 	mov $0x10, %ah
 	int $0x16	# consume key
 	ret
@@ -134,19 +132,11 @@ print_op:
 	mov (%eax), %si
 	jmp move
 
-foo_aux:
+restart:
 	ljmp $0xF000, $0xfff0
-	//int $0x19
-	//ret
-	//mov $0x0000, %ax
-	//mov %ax, 0x00400072
-	//jmp 0xFFFF0000
-	//int $0x19
-	//call print_foo
-	//jmp loop_user_op
 
-print_bar_aux:
-	call print_bar
+print_ver_aux:
+	call print_ver
 	jmp loop_user_op
 
 print_help_aux:
@@ -159,16 +149,22 @@ user_op:
 	call print_welcome2
 loop_user_op:
 	call read_op
-	cmp $0x61, %al
-	jz foo_aux
-	cmp $0x62, %al
-	jz print_bar
-	xor %al, %al
-	jnz	print_help
-/*
+	cmp $0x34, %al # restart op=4
+	jz restart
+	cmp $0x31, %al # clear screen op=1
+	jz clear_screen_op
+	cmp $0x32, %al # print version op=2
+	jz print_ver
+	jmp	print_help
+
+clear_screen_op:
+	call clear_screen
+	mov $0x0, %di
+	jmp user_op
+
 printw:
 	push %ax
- 	shr $8, %ax
+ 	shrw $3, %ax
  	call printb
  	pop %ax
  	push %ax
@@ -178,7 +174,7 @@ printw:
  	ret
 printb:
 	push %ax
-  	shr $4, %al
+  	shr $2, %al
   	call printasc
   	pop %ax
   	and $0xf, %al
@@ -193,25 +189,20 @@ printasc_e:
 	mov %al, %dl
 	mov $0x2, %ah
   	ret
-*/
+
 start:
 	nop
 	xor %ax, %ax
 	xor %di, %di
-	//int $0x19 # Here it restarts
+	//mov $0xA4, %ax
 	//call printw
-	mov $0x0123, %ax
-	//call printw
+	//mov %ax, %si
+	//call print
 	call user_op
 	call read_op
 	cmp $0x66, %al
 	je	print_foo
 	jne print_welcome2
-	//call print_op
-	//call print_welcome
-	//call move_cursor
-	//call print_welcome2
-	//call read_op
 
 end:
 	jmp end

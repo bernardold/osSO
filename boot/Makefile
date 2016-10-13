@@ -21,6 +21,8 @@ clean:
 	@rm -rf ./*.bin ./*.o ./*.elf
 appending:
 	dd $(BOOT_SIGNATURE) if=$(SIGNATURE_DUMP) of=$(CURRENT_DIR)/$(PROG).bin
+debug_no_boot: clean assembly link
+	gdb $(PROG).elf
 debug: clean assembly link object appending
 	hexdump -C $(PROG).bin
 full: clean assembly link object appending test
