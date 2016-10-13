@@ -66,7 +66,7 @@ print_welcome2:
 	mov %ax, %ds
 	mov $msg_cmd, %si
 	
-	mov $0x0A, %ah //teste
+	mov $0x0A, %ah
 	mov $0x61, %al
 	mov $0x00, %bh 
 	mov $0x10, %bl 
@@ -201,7 +201,7 @@ start:
 	//int $0x19 # Here it restarts
 	//call printw
 	mov $0x0123, %ax
-	call printw
+	//call printw
 	call user_op
 	call read_op
 	cmp $0x66, %al
