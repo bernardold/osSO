@@ -166,14 +166,12 @@ print_hex:		# as http://stackoverflow.com/questions/3853730/printing-hexadecimal
 	and $0x0F, %al 		# low from al
 	call nibble_to_hex 	# convert low al to hex
 
-	# to print correctly
-	movb	$0x0E, %ah
-	movb	$0x00, %bh
+	movb $0x0E, %ah 	# to print correctly
+	movb $0x00, %bh 	# set page num
 
 	int 	$0x10 		# print high (should already be in al)
 	movb 	%cl, %al 	# move low to al
 	int 	$0x10		# print al
-
 
 	pop %cx
 	ret
@@ -182,11 +180,11 @@ nibble_to_hex:
 	cmp $10, %al
 	jl skip_nibble_to_hex
 
-	# if (al > 10)
+	# if (al >= 10)
 	add $0x57, %al #0x57 = 'A' - 10
 	jmp return_nibble_to_hex
 
-	# else
+	# else (al < 10)
 	skip_nibble_to_hex:
 		add $'0', %al 	#adiciona 0 para o digito inicial (que eh o valor de al + o char 0)
 		jmp return_nibble_to_hex
