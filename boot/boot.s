@@ -3,7 +3,7 @@
  *	
  *	Simple boot sector implementation for osSO.
  *  
- *	It performs a simple operations given by the opcodes:
+ *	It performs few simple operations given by the opcodes:
  *		- 1 clear screen
  *		- 2 bootload version
  *		- 3 print devices
@@ -51,11 +51,6 @@ msg_eighty:
 _start:
 	jmp start
 
-print_setup:
-	mov $0xB800, %ax
-	mov %ax, %ds
-	jmp print
-
 print:
 	xor %dx, %dx
 	mov %cs:(%si), %dl # si MUST contain the string to be printed
@@ -73,13 +68,16 @@ print_welcome:
 	mov $0xB800, %ax # Set to color monitor (use 0xB000 for monochrome)
 	mov %ax, %ds
 	mov $msg_welcome, %si
-	jmp move
+	call print
+
 print_welcome2:
 	mov $0x0A00, %di
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
-	jmp move
+	call print
+	ret
+	
 print_ver:
 	mov $msg_ver, %si
 	call print
@@ -113,19 +111,6 @@ print_eighty:
 	call print
 	jmp drives
 
-
-move:
-	xor %dx, %dx
-	mov %cs:(%si), %dl
-	cmp $0, %dl
-idle:
-	jz end_print
-	mov %dl, (%di)
-	inc %di
-	movb $0x1E, (%di) # color
-	inc %di
-	inc %si
-	jmp move
 end_print:
 	ret
 
@@ -150,14 +135,6 @@ read_op:
 	mov $0x10, %ah
 	int $0x16	# consume key
 	ret
-
-print_op:
-	push %eax
-	mov $0xB800, %ax
-	mov %ax, %ds
-	pop %eax
-	mov (%eax), %si
-	jmp move
 
 restart:
 	ljmp $0xF000, $0xfff0
@@ -194,13 +171,11 @@ clear_screen_op:
 print_dev:
 	int $0x11
 	push %ax
-	#mov %ax, %bx
 	floppy:
 		and $0x1, %ax # diskette
 		cmp $0x1, %ax
 		jz print_floppy
 	mouse:
-		#mov %bx, %ax # recover flags
 		pop %ax
 		push %ax
 		and $0x3, %ax
@@ -231,7 +206,7 @@ print_dev:
 	drives:
 		xor %ax, %ax
 		jmp loop_user_op
-	
+
 start:
 	nop
 	xor %ax, %ax
