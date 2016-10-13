@@ -63,7 +63,7 @@ print_welcome:
 	mov $msg_welcome, %si
 	jmp move
 print_welcome2:
-	mov $0x0140, %di
+	mov $0x0A00, %di
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
@@ -114,7 +114,7 @@ move_cursor:
 	mov $0x02, %ah # set cursor position
     mov $0x00, %bh # display page (change for text mode)
 	mov $0x10, %dh # set cursor row
-	mov $0x03, %dl # set cursor column
+	mov $0xA, %dl # set cursor column
 	int $0x10
 	ret
 
@@ -149,12 +149,14 @@ user_op:
 	call print_welcome2
 loop_user_op:
 	call read_op
-	cmp $0x34, %al # restart op=4
-	jz restart
 	cmp $0x31, %al # clear screen op=1
 	jz clear_screen_op
 	cmp $0x32, %al # print version op=2
 	jz print_ver
+	cmp $0x33, %al # print devices op=3
+	jz print_dev
+	cmp $0x34, %al # restart op=4
+	jz restart
 	jmp	print_help
 
 clear_screen_op:
@@ -162,42 +164,14 @@ clear_screen_op:
 	mov $0x0, %di
 	jmp user_op
 
-printw:
-	push %ax
- 	shrw $3, %ax
- 	call printb
- 	pop %ax
- 	push %ax
- 	and  $0xff, %ax
- 	call printb
- 	pop %ax
- 	ret
-printb:
-	push %ax
-  	shr $2, %al
-  	call printasc
-  	pop %ax
-  	and $0xf, %al
-  	call printasc
-  	ret
-printasc:
-	add $0x30, %al
-  	cmp $0x39, %al
-  	jle printasc_e
-  	add $0x7, %al
-printasc_e:
-	mov %al, %dl
-	mov $0x2, %ah
-  	ret
+print_dev:
+	nop
+	jmp loop_user_op
 
 start:
 	nop
 	xor %ax, %ax
 	xor %di, %di
-	//mov $0xA4, %ax
-	//call printw
-	//mov %ax, %si
-	//call print
 	call user_op
 	call read_op
 	cmp $0x66, %al
