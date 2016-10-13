@@ -69,14 +69,15 @@ print_welcome:
 	mov %ax, %ds
 	mov $msg_welcome, %si
 	call print
-	//jmp move
+
 print_welcome2:
 	mov $0x0A00, %di
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
 	call print
-	//jmp move
+	ret
+	
 print_ver:
 	mov $msg_ver, %si
 	call print
@@ -109,20 +110,7 @@ print_eighty:
 	mov $msg_eighty, %si
 	call print
 	jmp drives
-/*
-move:
-	xor %dx, %dx
-	mov %cs:(%si), %dl
-	cmp $0, %dl
-idle:
-	jz end_print
-	mov %dl, (%di)
-	inc %di
-	movb $0x1E, (%di) # color
-	inc %di
-	inc %si
-	jmp move
-*/
+
 end_print:
 	ret
 
