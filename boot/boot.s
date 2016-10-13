@@ -155,12 +155,12 @@ mem_size:
 	jmp loop_user_op
 
 print_hex:		# as http://stackoverflow.com/questions/3853730/printing-hexadecimal-digits-with-assembly
-	push %bx
+	push %cx
 
 	push %ax 			# saves al (from int 0x12)
 	shr $4, %al 		# high from al
 	call nibble_to_hex	# convert high al to hex
-	movb %al, %bl
+	movb %al, %cl
 
 	pop %ax 			# brings original al back
 	and $0x0F, %al 		# low from al
@@ -168,14 +168,14 @@ print_hex:		# as http://stackoverflow.com/questions/3853730/printing-hexadecimal
 
 	# to print correctly
 	movb	$0x0E, %ah
-	movb	$0x01, %bh
+	movb	$0x00, %bh
 
 	int 	$0x10 		# print high (should already be in al)
-	movb 	%bl, %al 	# move low to al
+	movb 	%cl, %al 	# move low to al
 	int 	$0x10		# print al
 
 
-	pop %bx
+	pop %cx
 	ret
 
 nibble_to_hex:
