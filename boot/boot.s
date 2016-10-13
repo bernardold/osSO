@@ -32,6 +32,8 @@ msg_bar:
 	.asciz "OsSo version 1.0.1-alpha"
 msg_help:
 	.asciz "Invalid Opcode, options (1,2,3,4,5)"
+msg_mem:
+	.asciz "Mem: 0x" #output should be hex
 
 .section .text
 
@@ -140,6 +142,59 @@ print_ver_aux:
 	call print_ver
 	jmp loop_user_op
 
+mem_size:
+	push %ax
+
+	mov $msg_mem, %si
+	call print
+
+	int $0x12			# ax <- mem size (uses al though)
+	call print_hex
+
+	pop %ax
+	jmp loop_user_op
+
+print_hex:		# as http://stackoverflow.com/questions/3853730/printing-hexadecimal-digits-with-assembly
+	push %bx
+
+	push %ax 			# saves al (from int 0x12)
+	shr $4, %al 		# high from al
+	call nibble_to_hex	# convert high al to hex
+	movb %al, %bl
+
+	pop %ax 			# brings original al back
+	and $0x0F, %al 		# low from al
+	call nibble_to_hex 	# convert low al to hex
+
+	# to print correctly
+	movb	$0x0E, %ah
+	movb	$0x01, %bh
+
+	int 	$0x10 		# print high (should already be in al)
+	movb 	%bl, %al 	# move low to al
+	int 	$0x10		# print al
+
+
+	pop %bx
+	ret
+
+nibble_to_hex:
+	cmp $10, %al
+	jl skip_nibble_to_hex
+
+	# if (al > 10)
+	add $0x57, %al #0x57 = 'A' - 10
+	jmp return_nibble_to_hex
+
+	# else
+	skip_nibble_to_hex:
+		add $'0', %al 	#adiciona 0 para o digito inicial (que eh o valor de al + o char 0)
+		jmp return_nibble_to_hex
+
+return_nibble_to_hex:
+	ret 	# al has the hex for the nibble
+
+
 print_help_aux:
 	call print_help
 	jmp loop_user_op
@@ -158,6 +213,8 @@ loop_user_op:
 	jz print_dev
 	cmp $0x34, %al # restart op=4
 	jz restart
+	cmp $0x35, %al # available memory size op=5
+	jz mem_size
 	jmp	print_help
 
 clear_screen_op:
