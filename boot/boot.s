@@ -79,12 +79,6 @@ print_welcome2:
 	mov $0xB800, %ax
 	mov %ax, %ds
 	mov $msg_cmd, %si
-	mov $0x0A, %ah
-	mov $0x61, %al
-	mov $0x00, %bh 
-	mov $0x10, %bl 
-	mov $0x03, %cx 
-	int $0x10
 	jmp move
 print_ver:
 	mov $msg_ver, %si
