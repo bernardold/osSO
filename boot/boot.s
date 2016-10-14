@@ -31,7 +31,7 @@ msg_ver:
 msg_help:
 	.asciz "InvOp, op(1,2,3,4,5)"
 msg_mem:
-	.asciz "Mem: 0x" #output should be hex
+	.asciz "  h mem available" #output should be hex
 msg_floppy:
 	.asciz "Floppy; "
 msg_mouse:
@@ -83,7 +83,6 @@ print_ver:
 	call clear_screen_op2
 	mov $msg_ver, %si
 	call print
-	call shift_cursor
 	jmp loop_user_op
 print_help:
 	call clear_screen_op2
@@ -132,15 +131,6 @@ move_cursor:
     mov $0x00, %bh # display page (change for text mode)
 	mov $0x10, %dh # set cursor row
 	mov $0xA, %dl # set cursor column
-	int $0x10
-	ret
-
-/* Shift the cursor by x position, x previous stored at stack */
-shift_cursor:
-	mov $0x02, %ah
-	mov $0x00, %bh
-	mov $0x1000, %dx
-	add %cx, %dx
 	int $0x10
 	ret
 
