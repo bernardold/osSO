@@ -27,11 +27,11 @@ msg_welcome:
 msg_cmd:
 	.asciz "Waiting..."
 msg_ver:
-	.asciz "osSO v.1.0.1-alpha"
+	.asciz "osSO v.1.1.0"
 msg_help:
 	.asciz "InvOp, op(1,2,3,4,5)"
 msg_mem:
-	.asciz "Mem: 0x" #output should be hex
+	.asciz "  h mem available" #output should be hex
 msg_floppy:
 	.asciz "Floppy; "
 msg_mouse:
@@ -80,14 +80,17 @@ print_welcome2:
 	ret
 	
 print_ver:
+	call clear_screen_op2
 	mov $msg_ver, %si
 	call print
 	jmp loop_user_op
 print_help:
+	call clear_screen_op2
 	mov $msg_help, %si
 	call print
 	jmp loop_user_op
 print_floppy:
+	call clear_screen_op2
 	mov $msg_floppy, %si
 	call print
 	jmp mouse
@@ -145,6 +148,7 @@ print_ver_aux:
 	jmp loop_user_op
 
 mem_size:
+	call clear_screen_op2
 	push %ax
 
 	mov $msg_mem, %si
@@ -172,6 +176,7 @@ print_hex:		# as http://stackoverflow.com/questions/3853730/printing-hexadecimal
 	movb $0x00, %bh 	# set page num
 
 	int 	$0x10 		# print high (should already be in al)
+	
 	movb 	%cl, %al 	# move low to al
 	int 	$0x10		# print al
 
@@ -221,6 +226,13 @@ clear_screen_op:
 	call clear_screen
 	mov $0x0, %di
 	jmp user_op
+
+clear_screen_op2:
+	mov $0x0, %di
+	call print_welcome
+	call move_cursor
+	call print_welcome2
+	ret
 
 print_dev:
 	int $0x11

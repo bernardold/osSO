@@ -120,7 +120,7 @@ A version X.Y.Z-K represents:
 * K -> PRE-RELEASE version id (an small ASCII alphanumerics and hyphen
 [0-9A-Za-z-] with the identifier for the pre-release)
 
-The current build released is 1.0.0-alpha
+The current build released is 1.1.0
 
 ## Authors
 
