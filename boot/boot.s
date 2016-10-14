@@ -31,7 +31,7 @@ msg_ver:
 msg_help:
 	.asciz "InvOp, op(1,2,3,4,5)"
 msg_mem:
-	.asciz "Mem: 0x" #output should be hex
+	.asciz "  h mem available" #output should be hex
 msg_floppy:
 	.asciz "Floppy; "
 msg_mouse:
