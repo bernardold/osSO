@@ -126,6 +126,7 @@ The current build released is 1.1.0
 
 * **Bernardo Simões Lage Gomes Duarte (bernardolageduarte@gmail.com)**
 * **Décio Lauro Soares (deciolauro@gmail.com)**
+* **Giovani Ortolani Barbosa (giovani.barbosa@usp.br)**
 * **Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)**
 
 See also the list of [contributors](https://github.com/SO-I-2016/osSO/contributors)
@@ -140,7 +141,7 @@ file for details
 
 ## Copyright
 
-Copyright (C) <2016>  Bernardo S. L. Gomes Duarte; Décio Lauro Soares; Jhonathan Roberto Viudes
+Copyright (C) <2016>  Bernardo S. L. Gomes Duarte; Décio Lauro Soares; Giovani Ortolani Barbosa; Jhonathan Roberto Viudes
 
 ## Acknowledgments
 
