@@ -1,5 +1,7 @@
+BOOT_FOLDER = ./src
+
 all:
-	@as --32 bootloader.s -o bootloader.o
+	@as --32 $(BOOT_FOLDER)/bootloader.s -o $(BOOT_FOLDER)/bootloader.o
 	@gcc -m32 -c kernel.c -o kernel.o -ffreestanding -nostdinc
 	@gcc -m32 -T  linker.ld -o  kernel.bin -nostdlib -ffreestanding bootloader.o kernel.o 
 	@qemu-system-i386 -kernel kernel.bin 
