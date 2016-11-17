@@ -1,8 +1,26 @@
+/** @file 	bootloader.s
+ *	@brief	Simple multiboot sector
+ *	
+ *	Simple multiboot sector implementation for osSO.
+ *  
+ *	STRONGLY BASED ON: http://wiki.osdev.org/Meaty_Skeleton#Kernel_Design
+ *
+ *	@author		Bernardo Simoes Lage Gomes Duarte (bernardolageduarte@gmail.com)
+ *	@author		Decio Lauro Soares (deciolauro@gmail.com)
+ *	@author		Giovani Ortolani Barbosa (giovani.barbosa@usp.br)
+ *	@author		Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)
+ *	@date		2016
+ *	@bug		--
+ *	@warning	--
+ * 	@copyright	GNU Public License v3
+ */
 
-.set		MAGIC,		0x1BADB002
-.set		FLAGS,		0 | 1
-.set		CHECKSUM,	-(MAGIC + FLAGS)
-.set		STACK_SIZE,	0x4000
+.set ALIGN,    1<<0
+.set MEMINFO,  1<<1
+.set FLAGS,    ALIGN | MEMINFO
+.set MAGIC,    0x1BADB002
+.set CHECKSUM, -(MAGIC + FLAGS)
+.set STACK_SIZE,	0x4000
 
 .section	.text
 .globl		start, _start

@@ -46,6 +46,7 @@ Para o sistema de versionamento, estaremos usando uma versão adptada do [SemVer
 
 * **Bernardo Simões Lage Gomes Duarte (bernardolageduarte@gmail.com)**
 * **Décio Lauro Soares (deciolauro@gmail.com)**
+* **Giovani Ortolani Barbosa (giovani.barbosa@usp.br)**
 * **Jhonathan Roberto Viudes (jhonathan.viudes@gmail.com)**
 
 Além dos autores, uma lista de colaboradores poderá ser encontrada em: [contributors](git://github.com/SO-I-2016/osSO/contributors).
@@ -60,4 +61,4 @@ Após à abertura pública do código, este programa consitirá de free software
 
 ## Copyright
 
-Copyright (C) <2016>  Bernardo S. L. Gomes Duarte; Décio Lauro Soares; Jhonathan Roberto Viudes
+Copyright (C) <2016>  Bernardo S. L. Gomes Duarte; Décio Lauro Soares; Giovani Ortolani Barbosa; Jhonathan Roberto Viudes
